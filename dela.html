@@ -97,6 +97,19 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbzIHUIe2RlMkPfWg5VE8fwryv2aahLCWwiK970zAEylcvjnns_5xXiYovZQ6J5SN87D/exec";
 
+        // Função auxiliar para formatar datas e horas limpas
+        function formatarDataHora(valor) {
+            if (!valor) return '';
+            if (typeof valor === 'string' && valor.includes('T')) {
+                const data = new Date(valor);
+                if (valor.startsWith('1899-')) {
+                    return data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
+                }
+                return data.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+            }
+            return valor;
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             carregarDadosPlanilha();
         });
@@ -114,7 +127,8 @@
                         rows.forEach((row, index) => {
                             html += '<tr>';
                             row.forEach(cell => {
-                                html += index === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
+                                const valorFormatado = index === 0 ? cell : formatarDataHora(cell);
+                                html += index === 0 ? `<th>${valorFormatado}</th>` : `<td>${valorFormatado}</td>`;
                             });
                             html += '</tr>';
                         });
