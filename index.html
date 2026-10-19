@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Controle e Saúde</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            margin: 0 0 8px 0;
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        header p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-danger {
+            background-color: #dc2626;
+        }
+        .btn-danger:hover {
+            background-color: #b91c1c;
+        }
+
+        .btn-export {
+            background-color: #16a34a;
+            margin-top: 10px;
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+        }
+        .btn-export:hover {
+            background-color: #15803d;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 10px;
+            margin-top: 15px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .badge {
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            box-sizing: border-box;
+            background: #f8fafc;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            align-items: flex-end;
+        }
+        @media (max-width: 768px) {
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- PAINEL DE CONFIGURAÇÕES VISUAL -->
+    <div class="card" style="border-color: #cbd5e1; background: #f1f5f9;">
+        <h2 style="font-size: 1.1rem; color: #475569;">⚙️ Configurações do Painel</h2>
+        <div class="config-grid">
+            <div>
+                <label style="font-size: 0.85rem; font-weight: 600; color: #475569;">Título do Painel:</label>
+                <input type="text" id="config-titulo" value="Painel de Controle e Saúde">
+            </div>
+            <div>
+                <label style="font-size: 0.85rem; font-weight: 600; color: #475569;">Cor Principal:</label>
+                <select id="config-cor">
+                    <option value="#2563eb">Azul Padrão</option>
+                    <option value="#16a34a">Verde Saúde</option>
+                    <option value="#9333ea">Roxo Elegante</option>
+                    <option value="#dc2626">Vermelho Alerta</option>
+                </select>
+            </div>
+            <div>
+                <button onclick="salvarConfiguracoes()" style="height: 40px;">Aplicar Configurações</button>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <h1 id="main-title">Painel de Controle e Saúde</h1>
+        <p>Acompanhamento de exames, consultas, medicamentos e pressão</p>
+    </header>
+
+    <!-- EXAMES -->
+    <div class="card">
+        <h2>Exames</h2>
+        <table id="tabela-exames">
+            <thead>
+                <tr>
+                    <th>Exame</th>
+                    <th>Data</th>
+                    <th>Horas / Prazo</th>
+                    <th>Observação</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="form-row">
+            <input type="text" id="novo-exame-nome" placeholder="Nome do Exame">
+            <input type="text" id="novo-exame-data" placeholder="Data (Ex: 30/10/2026)">
+            <input type="text" id="novo-exame-hora" placeholder="Horário">
+            <input type="text" id="novo-exame-obs" placeholder="Observação">
+            <button onclick="adicionarExame()">Adicionar</button>
+        </div>
+    </div>
+
+    <!-- CONSULTAS DE RETORNO -->
+    <div class="card">
+        <h2>Consultas de Retorno</h2>
+        <table id="tabela-retorno">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Médica(o)</th>
+                    <th>Hora</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="form-row" style="grid-template-columns: 1fr 2fr 1fr auto;">
+            <input type="text" id="novo-retorno-data" placeholder="Data">
+            <input type="text" id="novo-retorno-medica" placeholder="Nome do Médico(a)">
+            <input type="text" id="novo-retorno-hora" placeholder="Hora">
+            <button onclick="adicionarRetorno()">Adicionar</button>
+        </div>
+    </div>
+
+    <!-- REMÉDIOS -->
+    <div class="card">
+        <h2>Remédios - Mãe</h2>
+        <table id="tabela-remedios">
+            <thead>
+                <tr>
+                    <th>Medicamento</th>
+                    <th>Dose / Qtd</th>
+                    <th>Período</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- CONTROLE DE PRESSÃO -->
+    <div class="card">
+        <h2>Controle de Pressão</h2>
+        <table id="tabela-pressao">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Aferição</th>
+                    <th>Período</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="form-row" style="grid-template-columns: 1fr 2fr 1fr auto;">
+            <input type="text" id="novo-pressao-data" placeholder="Data (Ex: 20/10)">
+            <input type="text" id="novo-pressao-afericao" placeholder="Aferição (Ex: 120x80 mmHg)">
+            <input type="text" id="novo-pressao-periodo" placeholder="Período (Ex: Manhã)">
+            <button onclick="adicionarPressao()">Adicionar</button>
+        </div>
+    </div>
+
+    <!-- PAINEL DE SINCRONIZAÇÃO PARA O CHAT -->
+    <div class="card" style="border-color: #2563eb; background: #eff6ff;">
+        <h2 style="color: #1d4ed8; border-color: #bfdbfe;">Área de Atualização</h2>
+        <p style="font-size: 0.9rem; color: #1e40af; margin-top: 5px;">
+            Sempre que houver novas alterações, clique no botão abaixo para gerar o código de resumo e enviá-lo aqui no chat.
+        </p>
+        <button class="btn-export" onclick="gerarCodigo()">Gerar Código de Atualização para o Chat</button>
+        <textarea id="codigo-saida" readonly placeholder="O código gerado aparecerá aqui para você copiar..."></textarea>
+    </div>
+</div>
+
+<script>
+    let dadosApp = JSON.parse(localStorage.getItem('dadosSaudeAltinoConfigV3')) || {
+        config: {
+            titulo: "Painel de Controle e Saúde",
+            cor: "#2563eb"
+        },
+        exames: [
+            { nome: "Fezes", data: "Segunda a sexta", hora: "07 as 09", obs: "-" },
+            { nome: "Urina", data: "Segunda a sexta", hora: "07 as 09", obs: "-" },
+            { nome: "Hemograma completo", data: "20/10/2026", hora: "07:30", obs: "-" },
+            { nome: "Mamografia", data: "29/10/2026", hora: "10hs", obs: "-" },
+            { nome: "Eletrocardiograma", data: "....", hora: "......", obs: "Aguardando ligação do posto" },
+            { nome: "Audiometria", data: "........", hora: "......", obs: "Aguardando ligação do posto" }
+        ],
+        retornos: [
+            { data: "21/12/2026", medica: "Anna Flavia", hora: "13:20" }
+        ],
+        remedios: [
+            { nome: "Capitopril 25mg", dose: "1 CP", periodo: "8 / 8hs" },
+            { nome: "Hidroclorotiazida", dose: "1 CP", periodo: "Manhã" },
+            { nome: "Insulina Humana", dose: "1 aplicação", periodo: "Manhã 14ui / Tarde 12ui" },
+            { nome: "Metiformina", dose: "1 CP", periodo: "8 / 8hs" }
+        ],
+        pressao: [
+            { data: "19/10", afericao: "150x80 mmHg", periodo: "Manhã" }
+        ]
+    };
+
+    function salvar() {
+        localStorage.setItem('dadosSaudeAltinoConfigV3', JSON.stringify(dadosApp));
+        renderizar();
+    }
+
+    function aplicarEstilos() {
+        if(!dadosApp.config) dadosApp.config = { titulo: "Painel de Controle e Saúde", cor: "#2563eb" };
+        
+        document.documentElement.style.setProperty('--primary', dadosApp.config.cor);
+        // Calcula uma cor escura aproximada para o hover
+        document.documentElement.style.setProperty('--primary-dark', dadosApp.config.cor);
+        
+        document.getElementById("main-title").innerText = dadosApp.config.titulo;
+        document.getElementById("config-titulo").value = dadosApp.config.titulo;
+        document.getElementById("config-cor").value = dadosApp.config.cor;
+    }
+
+    function salvarConfiguracoes() {
+        let novoTitulo = document.getElementById("config-titulo").value;
+        let novaCor = document.getElementById("config-cor").value;
+
+        if(!novoTitulo) return alert("Digite um título válido!");
+
+        dadosApp.config.titulo = novoTitulo;
+        dadosApp.config.cor = novaCor;
+        salvar();
+        aplicarEstilos();
+        alert("Configurações aplicadas com sucesso!");
+    }
+
+    function renderizar() {
+        aplicarEstilos();
+
+        let tbodyExames = document.querySelector("#tabela-exames tbody");
+        tbodyExames.innerHTML = "";
+        dadosApp.exames.forEach((item, index) => {
+            tbodyExames.innerHTML += `<tr>
+                <td>${item.nome}</td><td>${item.data}</td><td>${item.hora}</td><td>${item.obs}</td>
+                <td><button class="btn-danger" onclick="removerExame(${index})">Excluir</button></td>
+            </tr>`;
+        });
+
+        let tbodyRetornos = document.querySelector("#tabela-retorno tbody");
+        tbodyRetornos.innerHTML = "";
+        dadosApp.retornos.forEach((item, index) => {
+            tbodyRetornos.innerHTML += `<tr>
+                <td>${item.data}</td><td>${item.medica}</td><td>${item.hora}</td>
+                <td><button class="btn-danger" onclick="removerRetorno(${index})">Excluir</button></td>
+            </tr>`;
+        });
+
+        let tbodyRemedios = document.querySelector("#tabela-remedios tbody");
+        tbodyRemedios.innerHTML = "";
+        dadosApp.remedios.forEach((item) => {
+            tbodyRemedios.innerHTML += `<tr>
+                <td>${item.nome}</td><td>${item.dose}</td><td>${item.periodo}</td>
+                <td><span class="badge">Ativo</span></td>
+            </tr>`;
+        });
+
+        let tbodyPressao = document.querySelector("#tabela-pressao tbody");
+        tbodyPressao.innerHTML = "";
+        dadosApp.pressao.forEach((item, index) => {
+            tbodyPressao.innerHTML += `<tr>
+                <td>${item.data}</td><td><b>${item.afericao}</b></td><td>${item.periodo}</td>
+                <td><button class="btn-danger" onclick="removerPressao(${index})">Excluir</button></td>
+            </tr>`;
+        });
+    }
+
+    function adicionarExame() {
+        let nome = document.getElementById("novo-exame-nome").value;
+        let data = document.getElementById("novo-exame-data").value;
+        let hora = document.getElementById("novo-exame-hora").value;
+        let obs = document.getElementById("novo-exame-obs").value;
+        if(!nome) return alert("Preencha o nome do exame!");
+        
+        dadosApp.exames.push({ nome, data, hora: hora || "-", obs: obs || "-" });
+        document.getElementById("novo-exame-nome").value = "";
+        document.getElementById("novo-exame-data").value = "";
+        document.getElementById("novo-exame-hora").value = "";
+        document.getElementById("novo-exame-obs").value = "";
+        salvar();
+    }
+
+    function removerExame(index) {
+        dadosApp.exames.splice(index, 1);
+        salvar();
+    }
+
+    function adicionarRetorno() {
+        let data = document.getElementById("novo-retorno-data").value;
+        let medica = document.getElementById("novo-retorno-medica").value;
+        let hora = document.getElementById("novo-retorno-hora").value;
+        if(!data || !medica) return alert("Preencha os campos obrigatórios!");
+
+        dadosApp.retornos.push({ data, medica, hora });
+        document.getElementById("novo-retorno-data").value = "";
+        document.getElementById("novo-retorno-medica").value = "";
+        document.getElementById("novo-retorno-hora").value = "";
+        salvar();
+    }
+
+    function removerRetorno(index) {
+        dadosApp.retornos.splice(index, 1);
+        salvar();
+    }
+
+    function adicionarPressao() {
+        let data = document.getElementById("novo-pressao-data").value;
+        let afericao = document.getElementById("novo-pressao-afericao").value;
+        let periodo = document.getElementById("novo-pressao-periodo").value;
+        if(!data || !afericao) return alert("Preencha os campos obrigatórios da pressão!");
+
+        dadosApp.pressao.push({ data, afericao, periodo: periodo || "-" });
+        document.getElementById("novo-pressao-data").value = "";
+        document.getElementById("novo-pressao-afericao").value = "";
+        document.getElementById("novo-pressao-periodo").value = "";
+        salvar();
+    }
+
+    function removerPressao(index) {
+        dadosApp.pressao.splice(index, 1);
+        salvar();
+    }
+
+    function gerarCodigo() {
+        let codigo = btoa(encodeURIComponent(JSON.stringify(dadosApp)));
+        document.getElementById("codigo-saida").value = codigo;
+        alert("Código gerado com sucesso! Basta copiar o texto da caixinha abaixo e colar aqui no chat para mim.");
+    }
+
+    renderizar();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Saúde</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --primary-color: #007bff;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+        }
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        .form-box {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .form-box input, .form-box select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        .form-box button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Painel de Saúde</h1>
+        <p style="text-align: center; color: #666;">Dados atualizados em tempo real.</p>
+
+        <!-- Formulário para Adicionar Registros -->
+        <div class="card form-box">
+            <h3>➕ Adicionar Novo Registro</h3>
+            <label>Nome da Aba (ex: EXAMES, REMEDIOS, PRESSAO):</label>
+            <input type="text" id="inputAba" value="EXAMES">
+            
+            <label>Dado 1 (ex: Nome do Exame / Medicamento):</label>
+            <input type="text" id="inputVal1" placeholder="Ex: Hemograma">
+            
+            <label>Dado 2 (ex: Data / Valor / Observação):</label>
+            <input type="text" id="inputVal2" placeholder="Ex: 20/10/2026">
+
+            <button onclick="enviarDados()">Adicionar à Planilha</button>
+        </div>
+
+        <div id="contentArea">
+            <p style="text-align: center;">Carregando dados...</p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbzIHUIe2RlMkPfWg5VE8fwryv2aahLCWwiK970zAEylcvjnns_5xXiYovZQ6J5SN87D/exec";
+
+        window.addEventListener('DOMContentLoaded', () => {
+            carregarDadosPlanilha();
+        });
+
+        async function carregarDadosPlanilha() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                let html = '';
+                for (let abaName in data) {
+                    let rows = data[abaName];
+                    if (rows && rows.length > 0) {
+                        html += `<div class="card"><h2>${abaName}</h2><table>`;
+                        rows.forEach((row, index) => {
+                            html += '<tr>';
+                            row.forEach(cell => {
+                                html += index === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
+                            });
+                            html += '</tr>';
+                        });
+                        html += `</table></div>`;
+                    }
+                }
+                document.getElementById('contentArea').innerHTML = html;
+            } catch (error) {
+                document.getElementById('contentArea').innerHTML = '<p style="color: red; text-align: center;">Erro ao carregar os dados.</p>';
+            }
+        }
+
+        async function enviarDados() {
+            const aba = document.getElementById('inputAba').value;
+            const val1 = document.getElementById('inputVal1').value;
+            const val2 = document.getElementById('inputVal2').value;
+
+            if (!val1 || !val2) {
+                alert('Por favor, preencha os campos!');
+                return;
+            }
+
+            const dadosEnvio = {
+                aba: aba,
+                valores: [val1, val2]
+            };
+
+            try {
+                alert('A enviar dados para a planilha...');
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dadosEnvio)
+                });
+                
+                alert('Registro adicionado com sucesso!');
+                document.getElementById('inputVal1').value = '';
+                document.getElementById('inputVal2').value = '';
+                setTimeout(carregarDadosPlanilha, 2000); // Recarrega os dados após 2 segundos
+            } catch (e) {
+                alert('Erro ao enviar dados.');
+            }
+        }
+    </script>
+</body>
+</html>
